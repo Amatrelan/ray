@@ -4,8 +4,8 @@ use std::{fs::read_to_string, io::Write};
 
 pub use color_eyre::Result;
 
-// pub static BACKLIGHT_PATH: &str = "/sys/class/backlight";
-pub static BACKLIGHT_PATH: &str = "/sys/class/leds";
+pub static BACKLIGHT_PATH: &str = "/sys/class/backlight";
+// pub static BACKLIGHT_PATH: &str = "/sys/class/leds";
 pub static BRIGHTNESS: &str = "brightness";
 pub static MAX_BRIGHTNESS: &str = "max_brightness";
 
