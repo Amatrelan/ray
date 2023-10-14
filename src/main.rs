@@ -1,32 +1,18 @@
 use std::{fs::read_to_string, io::Write};
 
-use clap::{Parser, Subcommand};
-use color_eyre::Result;
-
-static BACKLIGHT_PATH: &str = "/sys/class/backlight";
-// This is here so I can develop on my desktop pc to quick swap and test things
-// static BACKLIGHT_PATH: &str = "/sys/class/leds";
-static BRIGHTNESS: &str = "brightness";
-static MAX_BRIGHTNESS: &str = "max_brightness";
-
-#[derive(Parser)]
-#[command(author, version, about, long_about = None)]
-struct Cli {
-    target: Option<String>,
-    #[command(subcommand)]
-    command: Commands,
-}
-
-#[derive(Subcommand)]
-enum Commands {
-    Get,
-    Set { percent: u32 },
-    Increase { percent: u32 },
-    Lower { percent: u32 },
-}
+use ray::{
+    cli::{Cli, Commands},
+    Result, BACKLIGHT_PATH, BRIGHTNESS, MAX_BRIGHTNESS,
+};
 
 fn main() -> Result<()> {
-    let cli = Cli::parse();
+    tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::TRACE)
+        .init();
+
+    let cli = Cli::get();
+
+    tracing::debug!("{:?}", cli);
 
     let mut folder = std::fs::read_dir(BACKLIGHT_PATH)?;
 
@@ -105,6 +91,7 @@ fn main() -> Result<()> {
     Ok(())
 }
 
+/// Reads path to u32, simple wrapper
 fn read_to(value: &std::path::PathBuf) -> Result<u32> {
     let a = read_to_string(value)?;
     let a = a.trim();
