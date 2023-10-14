@@ -4,7 +4,8 @@ use std::{fs::read_to_string, io::Write};
 
 pub use color_eyre::Result;
 
-pub static BACKLIGHT_PATH: &str = "/sys/class/backlight";
+// pub static BACKLIGHT_PATH: &str = "/sys/class/backlight";
+pub static BACKLIGHT_PATH: &str = "/sys/class/leds";
 pub static BRIGHTNESS: &str = "brightness";
 pub static MAX_BRIGHTNESS: &str = "max_brightness";
 
@@ -25,10 +26,19 @@ pub fn handle_command(cli: cli::Cli) -> Result<()> {
             let folder = std::fs::read_dir(BACKLIGHT_PATH)?;
             for each in folder {
                 let each = each?;
-                let brightness_value = each.path().join("brightness");
-                let current = read_to_string(brightness_value)?;
-                let current = current.trim();
-                println!("{:?}: {}", each.file_name(), current)
+                let current = {
+                    let val = read_to_string(each.path().join(BRIGHTNESS))?;
+                    let val = val.trim();
+                    let val: f32 = val.parse()?;
+                    val
+                };
+                let max = {
+                    let val = read_to_string(each.path().join(MAX_BRIGHTNESS))?;
+                    let val = val.trim();
+                    let val: f32 = val.parse()?;
+                    val
+                };
+                println!("{:?}: {}", each.file_name(), (current / max) * 100.0)
             }
         }
         cli::Commands::Set { percent } => {
