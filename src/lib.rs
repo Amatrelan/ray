@@ -5,7 +5,6 @@ use std::{fs::read_to_string, io::Write};
 pub use color_eyre::Result;
 
 pub static BACKLIGHT_PATH: &str = "/sys/class/backlight";
-// pub static BACKLIGHT_PATH: &str = "/sys/class/leds";
 pub static BRIGHTNESS: &str = "brightness";
 pub static MAX_BRIGHTNESS: &str = "max_brightness";
 
@@ -38,7 +37,7 @@ pub fn handle_command(cli: cli::Cli) -> Result<()> {
                     let val: f32 = val.parse()?;
                     val
                 };
-                println!("{:?}: {}", each.file_name(), (current / max) * 100.0)
+                println!("{:?}: {}", each.file_name(), (current / max) * 100.0);
             }
         }
         cli::Commands::Set { percent } => {

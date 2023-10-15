@@ -1,4 +1,7 @@
+mod utils;
+
 fn main() -> ray::Result<()> {
+    utils::initialize_panic_handler()?;
     let cli = ray::cli::Cli::get();
     let level = match cli.verbosity {
         1 => tracing::Level::ERROR,
