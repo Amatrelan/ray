@@ -66,12 +66,16 @@ pub fn handle_command(cli: cli::Cli) -> Result<()> {
             let current_brightness = read_to(&current)?;
             let amount = value_from_percent(percent, max_brightness);
 
-            let new_brightness =
+            let mut new_brightness =
                 if let Some(new_brightness) = current_brightness.checked_sub(amount) {
                     new_brightness
                 } else {
                     1
                 };
+
+            if new_brightness < 1 {
+                new_brightness = 1;
+            }
 
             write_brightness(current, new_brightness)?;
         }
