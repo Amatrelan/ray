@@ -29,8 +29,8 @@ pub enum Commands {
         #[arg(value_parser = clap::value_parser!(u8).range(0..=100))]
         percent: u8,
     },
-    /// Lower brightness
-    Lower {
+    /// Decrease brightness
+    Decrease {
         #[arg(value_parser = clap::value_parser!(u8).range(0..=100))]
         percent: u8,
     },
