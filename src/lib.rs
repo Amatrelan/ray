@@ -60,7 +60,7 @@ pub fn handle_command(cli: cli::Cli) -> Result<()> {
 
             write_brightness(current, new_brightness)?;
         }
-        cli::Commands::Lower { percent } => {
+        cli::Commands::Decrease { percent } => {
             let max_brightness = read_to(&root.join(MAX_BRIGHTNESS))?;
             let current = root.join(BRIGHTNESS);
             let current_brightness = read_to(&current)?;
