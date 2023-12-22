@@ -1,6 +1,6 @@
 use ray::Result;
 
-pub fn initialize_panic_handler() -> Result<()> {
+pub(crate) fn initialize_panic_handler() -> Result<()> {
     let (panic_hook, eyre_hook) = color_eyre::config::HookBuilder::default()
         .panic_section(format!(
             "This is a bug. Consider reporting it at {}",

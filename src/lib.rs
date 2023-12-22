@@ -41,15 +41,15 @@ pub fn handle_command(cli: cli::Cli) -> Result<()> {
             }
         }
         cli::Commands::Set { percent } => {
-            let max_brightness = read_to(&root.join(MAX_BRIGHTNESS))?;
+            let max_brightness = read_to_u32(&root.join(MAX_BRIGHTNESS))?;
             let new_brightness = value_from_percent(percent, max_brightness);
             let brightness_file = root.join(BRIGHTNESS);
             write_brightness(brightness_file, new_brightness)?;
         }
         cli::Commands::Increase { percent } => {
-            let max_brightness = read_to(&root.join(MAX_BRIGHTNESS))?;
+            let max_brightness = read_to_u32(&root.join(MAX_BRIGHTNESS))?;
             let current = root.join(BRIGHTNESS);
-            let current_brightness = read_to(&current)?;
+            let current_brightness = read_to_u32(&current)?;
             let amount = value_from_percent(percent, max_brightness);
 
             let new_brightness = if current_brightness + amount < max_brightness {
@@ -61,9 +61,9 @@ pub fn handle_command(cli: cli::Cli) -> Result<()> {
             write_brightness(current, new_brightness)?;
         }
         cli::Commands::Decrease { percent } => {
-            let max_brightness = read_to(&root.join(MAX_BRIGHTNESS))?;
+            let max_brightness = read_to_u32(&root.join(MAX_BRIGHTNESS))?;
             let current = root.join(BRIGHTNESS);
-            let current_brightness = read_to(&current)?;
+            let current_brightness = read_to_u32(&current)?;
             let amount = value_from_percent(percent, max_brightness);
 
             let mut new_brightness =
@@ -83,13 +83,14 @@ pub fn handle_command(cli: cli::Cli) -> Result<()> {
     Ok(())
 }
 
-fn read_to(value: &std::path::PathBuf) -> Result<u32> {
+fn read_to_u32(value: &std::path::PathBuf) -> Result<u32> {
     let a = read_to_string(value)?;
     let a = a.trim();
     let a: u32 = a.parse()?;
     Ok(a)
 }
 
+/// Converts percentage to value
 fn value_from_percent(percent: u8, max: u32) -> u32 {
     let percent = {
         if percent > 100 {
