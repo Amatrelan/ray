@@ -7,9 +7,9 @@ pub struct Cli {
     /// Target where to change brightness
     ///
     /// Defaults to first element in `/sys/class/backlight`. Not sure how stable this is in rust
-    pub target:  Option<String>,
+    pub target:    Option<String>,
     #[command(subcommand)]
-    pub command: Commands,
+    pub command:   Commands,
     #[arg(short, long, default_value_t = 3, action = clap::ArgAction::Count)]
     pub verbosity: u8,
 }
@@ -21,9 +21,10 @@ pub enum Commands {
     /// Values are in what kernel tells, not in percentage
     Get,
     /// Set value for target
-    Set { 
+    Set {
         #[arg(value_parser = clap::value_parser!(u8).range(0..=100))]
-        percent: u8 },
+        percent: u8,
+    },
     /// Increase brightness
     Increase {
         #[arg(value_parser = clap::value_parser!(u8).range(0..=100))]

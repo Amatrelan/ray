@@ -11,9 +11,7 @@ fn main() -> ray::Result<()> {
         _ => tracing::Level::ERROR,
     };
 
-    tracing_subscriber::fmt()
-        .with_max_level(level)
-        .init();
+    tracing_subscriber::fmt().with_max_level(level).init();
 
     return ray::handle_command(cli);
 }
