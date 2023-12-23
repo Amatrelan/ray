@@ -20,4 +20,9 @@ One thing that's different from `light` is that you cannot decrease brightness w
 ~This is still in heavily in WIP and there is still a possibility it will brick your laptop. So don't use if you're not prepared to lose some hardware.~
 
 # Why `ray`
-I used to use backlight control tool named [light](https://github.com/haikarainen/light) from `perkele1989`, but it seems to be so that he has dropped now support for it and is archived. I wanted to find similar simple tool, but there wasn't anything that ticked to marks for me. So I stated writing my own.
+I used to use backlight control tool named [light](https://github.com/perkele1989/light) from `perkele1989`, but it seems to be so that he has dropped now support for it and is archived. I wanted to find similar simple tool, but there wasn't anything that ticked to marks for me. So I started writing my own.
+
+Also `ray` isn't as powerful as light, and don't take care of many things. For example this wont help to setup udev rules.
+
+# Troubleshooting
+If this doesn't work, requires sudo, you need to add yourself to `video` group to access.
