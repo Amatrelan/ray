@@ -1,4 +1,4 @@
-use ray::Result;
+use color_eyre::Result;
 
 pub(crate) fn initialize_panic_handler() -> Result<()> {
     let (panic_hook, eyre_hook) = color_eyre::config::HookBuilder::default()

@@ -4,6 +4,10 @@ version = "0.9.0"
 edition = "2021"
 authors = ["Jarmo Riikonen <amatrelan@gmail.com>"]
 homepage = "https://github.com/Amatrelan/ray"
+repository = "https://github.com/Amatrelan/ray"
+keywords = ["linux", "backlight"]
+categories = ["command-line-utilities"]
+license = "MIT"
 
 [dependencies]
 better-panic = "0.3.0"
