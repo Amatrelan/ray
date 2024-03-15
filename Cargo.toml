@@ -2,7 +2,7 @@
 name = "ray"
 version = "0.9.0"
 edition = "2021"
-authors = ["Jarmo Riikonen <amatrelan@gmail.com>"]
+authors = ["Jarmo Riikonen <github.afterglow462@passmail.net>"]
 homepage = "https://github.com/Amatrelan/ray"
 repository = "https://github.com/Amatrelan/ray"
 keywords = ["linux", "backlight"]

@@ -23,7 +23,6 @@ fn main() -> color_eyre::Result<()> {
 
     match cli.command {
         cli::Commands::Get => {
-            tracing::info!("Hello world!");
             let target = match cli.target {
                 Some(target) => std::path::PathBuf::from_str(BACKLIGHT_PATH)?.join(target),
                 None => match get_first(BACKLIGHT_PATH) {

@@ -1,4 +1,4 @@
-//! CLI configuraiton and documentation
+//! CLI configuration and documentation
 
 use clap::{Parser, Subcommand};
 
@@ -28,15 +28,15 @@ pub enum Commands {
     Get,
     /// Set value for target (no limitations)
     Set {
-        /// Set values are percentage to simplier to use.
+        /// Set values are percentage to simpler to use.
         /// Values in /proc might not be in range 0-100 so
         /// it's simpler to use percentage
         #[arg(value_parser = clap::value_parser!(u8).range(0..=100))]
         percent: u8,
     },
-    /// Increase brightness in percentage (cannot be icreased over 100)
+    /// Increase brightness in percentage (cannot be increased over 100)
     Increase {
-        /// Set values are percentage to simplier to use.
+        /// Set values are percentage to simpler to use.
         /// Values in /proc might not be in range 0-100 so
         /// it's simpler to use percentage
         #[arg(value_parser = clap::value_parser!(u8).range(0..=100))]
@@ -44,7 +44,7 @@ pub enum Commands {
     },
     /// Decrease brightness in percentage (cannot be lowered below 1)
     Decrease {
-        /// Set values are percentage to simplier to use.
+        /// Set values are percentage to simpler to use.
         /// Values in /proc might not be in range 0-100 so
         /// it's simpler to use percentage
         #[arg(value_parser = clap::value_parser!(u8).range(0..=100))]

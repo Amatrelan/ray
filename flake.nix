@@ -40,8 +40,26 @@
           pre-commit-check = pre-commit-hooks.lib.${system}.run {
             src = ./.;
             hooks = {
+              # Nix
               alejandra.enable = true;
+              statix.enable = true;
+
+              # Rust
               rustfmt.enable = true;
+              # TODO: This uses different rustc than what it's compiled so it donesn't work.
+              # and I don't have energy to check right now how to fix this.
+              # clippy = {
+              #   enable = true;
+              # };
+              cargo-check.enable = true;
+
+              # Random
+              typos.enable = true;
+              commitizen.enable = true;
+            };
+
+            settings = {
+              clippy.offline = false;
             };
           };
         };
