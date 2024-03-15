@@ -1,46 +1,65 @@
 {
+  description = "Simple backlight management cli tool";
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
-    devenv.url = "github:cachix/devenv";
-    fenix = {
-      url = "github:nix-community/fenix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+
+    flake-utils.url = "github:numtide/flake-utils";
+    rust-overlay.url = "github:oxalica/rust-overlay";
+    rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
+
+    pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
+    pre-commit-hooks.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = {
     self,
     nixpkgs,
-    devenv,
+    rust-overlay,
+    flake-utils,
+    pre-commit-hooks,
     ...
-  } @ inputs: let
-    pkgs = nixpkgs.legacyPackages."x86_64-linux";
-  in {
-    devShell.x86_64-linux = devenv.lib.mkShell {
-      inherit inputs pkgs;
-      modules = [
-        ({
-          pkgs,
-          config,
-          ...
-        }: {
-          # This is your devenv configuration
-          packages = [];
+  }:
+    flake-utils.lib.eachDefaultSystem (
+      system: let
+        overlays = [(import rust-overlay)];
+        pkgs = import nixpkgs {
+          inherit system overlays;
+        };
 
-          languages.rust = {
-            enable = true;
-            channel = "nightly";
+        toolchain = pkgs.rust-bin.stable.latest.default;
+
+        nativeBuildInputs = with pkgs; [
+          rust-analyzer
+          toolchain
+        ];
+
+        buildInputs = with pkgs; [];
+      in {
+        checks = {
+          pre-commit-check = pre-commit-hooks.lib.${system}.run {
+            src = ./.;
+            hooks = {
+              alejandra.enable = true;
+              rustfmt.enable = true;
+            };
+          };
+        };
+
+        devShells.default = pkgs.mkShell {
+          inherit nativeBuildInputs buildInputs;
+          inherit (self.checks.${system}.pre-commit-check) shellHook;
+        };
+
+        packages.default = pkgs.rustPlatform.buildRustPackage rec {
+          name = "ray";
+          src = ./.;
+          cargoLock = {
+            lockFile = ./Cargo.lock;
           };
 
-          pre-commit.hooks = {
-            alejandra.enable = true;
-            commitizen.enable = true;
-            clippy.enable = true;
-            cargo-check.enable = true;
-            rustfmt.enable = true;
-          };
-        })
-      ];
-    };
-  };
+          inherit buildInputs;
+        };
+      }
+    );
 }

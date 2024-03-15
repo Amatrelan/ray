@@ -16,9 +16,9 @@ pub(crate) fn initialize_panic_handler() -> Result<()> {
         {
             use human_panic::{handle_dump, print_msg, Metadata};
             let meta = Metadata {
-                version:  env!("CARGO_PKG_VERSION").into(),
-                name:     env!("CARGO_PKG_NAME").into(),
-                authors:  env!("CARGO_PKG_AUTHORS").replace(':', ", ").into(),
+                version: env!("CARGO_PKG_VERSION").into(),
+                name: env!("CARGO_PKG_NAME").into(),
+                authors: env!("CARGO_PKG_AUTHORS").replace(':', ", ").into(),
                 homepage: env!("CARGO_PKG_HOMEPAGE").into(),
             };
 

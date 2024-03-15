@@ -1,5 +1,5 @@
 //! Backbone of [`ray`]
-#![feature(lint_reasons)] // Checks for attributes that allow lints without a reason.
+// #![feature(lint_reasons)] // wait till release. Checks for attributes that allow lints without a reason.
 #![allow(clippy::module_name_repetitions)]
 // clippy WARN level lints
 #![warn(
@@ -71,11 +71,11 @@ static MAX_BRIGHTNESS: &str = "max_brightness";
 /// Wrapper class for brightness folder what is used in linux
 pub struct Brightness {
     /// Path of current backlight folder
-    root:    std::path::PathBuf,
+    root: std::path::PathBuf,
     /// Current backlight value
     current: u32,
     /// Maximum backlight value what is supported
-    max:     u32,
+    max: u32,
 }
 
 impl Brightness {

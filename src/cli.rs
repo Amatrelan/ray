@@ -9,7 +9,7 @@ pub struct Cli {
     /// Target where to change brightness
     ///
     /// Defaults to first element in `/sys/class/backlight`. Not sure how stable this is in rust
-    pub target:  Option<String>,
+    pub target: Option<String>,
     /// Commands available for [`ray`]
     #[command(subcommand)]
     pub command: Commands,

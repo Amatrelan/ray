@@ -1,5 +1,7 @@
 use std::str::FromStr;
 
+use color_eyre::eyre::OptionExt;
+
 mod cli;
 mod utils;
 
@@ -21,8 +23,21 @@ fn main() -> color_eyre::Result<()> {
 
     match cli.command {
         cli::Commands::Get => {
-            //
-            todo!();
+            tracing::info!("Hello world!");
+            let target = match cli.target {
+                Some(target) => std::path::PathBuf::from_str(BACKLIGHT_PATH)?.join(target),
+                None => match get_first(BACKLIGHT_PATH) {
+                    Ok(val) => val,
+                    Err(_) => {
+                        tracing::error!("No light sources");
+                        return Ok(());
+                    }
+                },
+            };
+
+            let brightness = ray::Brightness::try_new(target)?;
+            println!("{}", brightness);
+            Ok(())
         }
         cli::Commands::Set { percent } => {
             let target = match cli.target {
@@ -53,5 +68,5 @@ fn main() -> color_eyre::Result<()> {
 
 fn get_first(path: &str) -> color_eyre::Result<std::path::PathBuf> {
     let mut folder = std::fs::read_dir(path)?;
-    Ok(folder.next().expect("No files in path")?.path())
+    Ok(folder.next().ok_or_eyre("No files in path")??.path())
 }
