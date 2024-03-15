@@ -2,7 +2,7 @@
   description = "Simple backlight management cli tool";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     flake-utils.url = "github:numtide/flake-utils";
     rust-overlay.url = "github:oxalica/rust-overlay";
@@ -51,7 +51,7 @@
           inherit (self.checks.${system}.pre-commit-check) shellHook;
         };
 
-        packages.default = pkgs.rustPlatform.buildRustPackage rec {
+        packages.default = pkgs.rustPlatform.buildRustPackage {
           name = "ray";
           src = ./.;
           cargoLock = {
