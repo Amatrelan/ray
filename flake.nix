@@ -5,78 +5,126 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     flake-utils.url = "github:numtide/flake-utils";
-    rust-overlay.url = "github:oxalica/rust-overlay";
-    rust-overlay.inputs.nixpkgs.follows = "nixpkgs";
 
-    pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
-    pre-commit-hooks.inputs.nixpkgs.follows = "nixpkgs";
+    crane = {
+      url = "github:ipetkov/crane";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    fenix = {
+      url = "github:nix-community/fenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.rust-analyzer-src.follows = "";
+    };
+
+    advisory-db = {
+      url = "github:rustsec/advisory-db";
+      flake = false;
+    };
   };
 
   outputs = {
     self,
     nixpkgs,
-    rust-overlay,
+    crane,
+    fenix,
     flake-utils,
-    pre-commit-hooks,
+    advisory-db,
     ...
   }:
     flake-utils.lib.eachDefaultSystem (
       system: let
-        overlays = [(import rust-overlay)];
-        pkgs = import nixpkgs {
-          inherit system overlays;
+        pkgs = nixpkgs.legacyPackages.${system};
+
+        inherit (pkgs) lib;
+
+        craneLib = crane.lib.${system};
+        src = craneLib.cleanCargoSource (craneLib.path ./.);
+
+        commonArgs = {
+          inherit src;
+          strictDeps = true;
+
+          buildInputs =
+            [
+            ]
+            ++ lib.optionals pkgs.stdenv.isDarwin [
+              pkgs.libiconv
+            ];
         };
 
-        toolchain = pkgs.rust-bin.stable.latest.default;
+        craneLibLLvmTools =
+          craneLib.overrideToolchain
+          (fenix.packages.${system}.complete.withComponents [
+            "cargo"
+            "llvm-tools"
+            "rustc"
+            "rustsrc"
+            "rust-analyzer"
+          ]);
 
-        nativeBuildInputs = with pkgs; [
-          rust-analyzer
-          toolchain
-        ];
+        cargoArtifacts = craneLib.buildDepsOnly commonArgs;
 
-        buildInputs = with pkgs; [];
+        my-crate = craneLib.buildPackage (commonArgs
+          // {
+            inherit cargoArtifacts;
+          });
       in {
         checks = {
-          pre-commit-check = pre-commit-hooks.lib.${system}.run {
-            src = ./.;
-            hooks = {
-              # Nix
-              alejandra.enable = true;
-              statix.enable = true;
+          inherit my-crate;
 
-              # Rust
-              rustfmt.enable = true;
-              # TODO: This uses different rustc than what it's compiled so it donesn't work.
-              # and I don't have energy to check right now how to fix this.
-              # clippy = {
-              #   enable = true;
-              # };
-              cargo-check.enable = true;
+          my-crate-clippy = craneLib.cargoClippy (commonArgs
+            // {
+              inherit cargoArtifacts;
+              cargoClippyExtraArgs = "--all-targets -- --deny warnings";
+            });
 
-              # Random
-              typos.enable = true;
-              commitizen.enable = true;
-            };
+          my-crate-doc = craneLib.cargoDoc (commonArgs
+            // {
+              inherit cargoArtifacts;
+            });
 
-            settings = {
-              clippy.offline = false;
-            };
-          };
-        };
-
-        devShells.default = pkgs.mkShell {
-          inherit nativeBuildInputs buildInputs;
-          inherit (self.checks.${system}.pre-commit-check) shellHook;
-        };
-
-        packages.default = pkgs.rustPlatform.buildRustPackage {
-          name = "ray";
-          src = ./.;
-          cargoLock = {
-            lockFile = ./Cargo.lock;
+          my-crate-fmt = craneLib.cargoFmt {
+            inherit src;
           };
 
-          inherit buildInputs;
+          my-crate-audit = craneLib.cargoAudit {
+            inherit src advisory-db;
+          };
+
+          my-crate-deny = craneLib.cargoDeny {
+            inherit src;
+          };
+
+          my-crate-nextest = craneLib.cargoNextest (commonArgs
+            // {
+              inherit cargoArtifacts;
+              partitions = 1;
+              partitionType = "count";
+            });
+        };
+
+        formatter = pkgs.alejandra;
+
+        packages =
+          {
+            default = my-crate;
+          }
+          // lib.optionalAttrs (!pkgs.stdenv.isDarwin) {
+            my-crate-llvm-coverage = craneLibLLvmTools.cargoLlvmCov (commonArgs
+              // {
+                inherit cargoArtifacts;
+              });
+          };
+
+        apps.default = flake-utils.lib.mkApp {
+          drv = my-crate;
+        };
+
+        devShells.default = craneLib.devShell {
+          checks = self.checks.${system};
+
+          packages = [];
         };
       }
     );

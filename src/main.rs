@@ -1,34 +1,38 @@
+use color_eyre::eyre::OptionExt;
 use std::str::FromStr;
 
-use color_eyre::eyre::OptionExt;
-
 mod cli;
-mod utils;
 
 /// Backlight path where lives controllable backlights
 static BACKLIGHT_PATH: &str = "/sys/class/backlight";
 
 fn main() -> color_eyre::Result<()> {
-    utils::initialize_panic_handler()?;
+    color_eyre::install()?;
+
     let cli = cli::Cli::get();
     let level = match cli.verbosity {
-        1 => tracing::Level::ERROR,
-        2 => tracing::Level::WARN,
-        3 => tracing::Level::INFO,
-        4 => tracing::Level::TRACE,
-        _ => tracing::Level::ERROR,
+        1 => log::LevelFilter::Error,
+        2 => log::LevelFilter::Warn,
+        3 => log::LevelFilter::Info,
+        4 => log::LevelFilter::Trace,
+        _ => log::LevelFilter::Error,
     };
 
-    tracing_subscriber::fmt().with_max_level(level).init();
+    let _ = simplelog::TermLogger::init(
+        level,
+        simplelog::Config::default(),
+        simplelog::TerminalMode::Mixed,
+        simplelog::ColorChoice::Auto,
+    );
 
     match cli.command {
         cli::Commands::Get => {
-            let target = match cli.target {
+            let target: std::path::PathBuf = match cli.target {
                 Some(target) => std::path::PathBuf::from_str(BACKLIGHT_PATH)?.join(target),
                 None => match get_first(BACKLIGHT_PATH) {
                     Ok(val) => val,
                     Err(_) => {
-                        tracing::error!("No light sources");
+                        log::error!("No light sources");
                         return Ok(());
                     }
                 },

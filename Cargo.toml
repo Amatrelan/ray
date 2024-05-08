@@ -7,13 +7,13 @@ homepage = "https://github.com/Amatrelan/ray"
 repository = "https://github.com/Amatrelan/ray"
 keywords = ["linux", "backlight"]
 categories = ["command-line-utilities"]
+description = "Simple backlight management tool"
 license = "MIT"
+readme = "README.md"
 
 [dependencies]
-better-panic = "0.3.0"
 clap = { version = "4.4.11", features = ["derive"] }
 color-eyre = "0.6.2"
-human-panic = "1.2.2"
+log = "0.4.21"
+simplelog = "0.12.2"
 strip-ansi-escapes = "0.2.0"
-tracing = "0.1.40"
-tracing-subscriber = "0.3.18"
