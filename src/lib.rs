@@ -163,6 +163,7 @@ fn value_from_percent(percent: u8, max: u32) -> u32 {
     new_brightness as u32
 }
 
+/// Writes new brightness to target path
 fn write_brightness(path: std::path::PathBuf, value: u32) -> Result<()> {
     log::debug!("Setting brightness");
     let mut f = std::fs::File::create(path)?;
