@@ -2,7 +2,7 @@
 name = "ray"
 version = "0.9.1"
 edition = "2021"
-authors = ["Jarmo Riikonen <github.afterglow462@passmail.net>"]
+authors = ["Amatrelan <github.afterglow462@passmail.net>"]
 homepage = "https://github.com/Amatrelan/ray"
 repository = "https://github.com/Amatrelan/ray"
 keywords = ["linux", "backlight"]
@@ -16,4 +16,3 @@ clap = { version = "4.4.11", features = ["derive"] }
 color-eyre = "0.6.2"
 log = "0.4.21"
 simplelog = "0.12.2"
-strip-ansi-escapes = "0.2.0"
