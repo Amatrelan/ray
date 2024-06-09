@@ -25,14 +25,8 @@ fn main() -> ray::Result<()> {
             println!("{}", brightness);
             Ok(())
         }
-        cli::Commands::Set { percent } => {
-            brightness.set_brightness(percent)
-        }
-        cli::Commands::Increase { percent } => {
-            brightness.increase(percent)
-        }
-        cli::Commands::Decrease { percent } => {
-            brightness.decrease(percent)
-        }
+        cli::Commands::Set { percent } => brightness.set_brightness(percent),
+        cli::Commands::Increase { percent } => brightness.increase(percent),
+        cli::Commands::Decrease { percent } => brightness.decrease(percent),
     }
 }

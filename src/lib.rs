@@ -84,8 +84,12 @@ impl Brightness {
     /// Tries to create new [`Brightness`] controller
     pub fn try_new(element: Option<std::path::PathBuf>) -> Result<Self> {
         let root = element.unwrap_or(get_first(BACKLIGHT_PATH)?);
-        let current: u32 = std::fs::read_to_string(root.join(BRIGHTNESS))?.trim().parse()?;
-        let max: u32 = std::fs::read_to_string(root.join(MAX_BRIGHTNESS))?.trim().parse()?;
+        let current: u32 = std::fs::read_to_string(root.join(BRIGHTNESS))?
+            .trim()
+            .parse()?;
+        let max: u32 = std::fs::read_to_string(root.join(MAX_BRIGHTNESS))?
+            .trim()
+            .parse()?;
 
         Ok(Self { root, current, max })
     }
@@ -161,7 +165,7 @@ fn value_from_percent(percent: u8, max: u32) -> u32 {
             percent
         }
     };
-    let percent: f32 = percent as f32 / 100.0;
+    let percent = percent as f32 / 100.0;
     let new_brightness = percent * max as f32;
     new_brightness as u32
 }
@@ -174,7 +178,6 @@ fn write_brightness(path: std::path::PathBuf, value: u32) -> Result<()> {
     f.write_all(new_brightness.as_bytes())?;
     Ok(())
 }
-
 
 fn get_first(path: &str) -> Result<std::path::PathBuf> {
     let mut folder = std::fs::read_dir(path)?;
