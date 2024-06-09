@@ -22,9 +22,7 @@ pub struct Cli {
 /// Available subcommands for [`ray`].
 #[derive(Subcommand, Debug)]
 pub enum Commands {
-    /// Get target value
-    ///
-    /// Values are in what kernel tells, not in percentage
+    /// Get target value, they are in what kernel tells, not in percentage
     Get,
     /// Set value for target (no limitations)
     Set {

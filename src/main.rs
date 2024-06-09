@@ -17,7 +17,7 @@ fn main() -> ray::Result<()> {
         simplelog::ColorChoice::Auto,
     );
 
-    let target = cli.target.map(|f| std::path::PathBuf::from(f));
+    let target = cli.target.map(std::path::PathBuf::from);
 
     match cli.command {
         cli::Commands::Get => {

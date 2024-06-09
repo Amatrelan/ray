@@ -11,7 +11,6 @@
     clippy::integer_division,
     clippy::large_include_file,
     clippy::map_err_ignore,
-    clippy::missing_docs_in_private_items,
     clippy::panic,
     clippy::todo,
     clippy::undocumented_unsafe_blocks,
