@@ -18,23 +18,20 @@ fn main() -> ray::Result<()> {
     );
 
     let target = cli.target.map(std::path::PathBuf::from);
+    let mut brightness = ray::Brightness::try_new(target)?;
 
     match cli.command {
         cli::Commands::Get => {
-            let brightness = ray::Brightness::try_new(target)?;
             println!("{}", brightness);
             Ok(())
         }
         cli::Commands::Set { percent } => {
-            let mut brightness = ray::Brightness::try_new(target)?;
             brightness.set_brightness(percent)
         }
         cli::Commands::Increase { percent } => {
-            let mut brightness = ray::Brightness::try_new(target)?;
             brightness.increase(percent)
         }
         cli::Commands::Decrease { percent } => {
-            let mut brightness = ray::Brightness::try_new(target)?;
             brightness.decrease(percent)
         }
     }
