@@ -13,6 +13,5 @@ readme = "README.md"
 
 [dependencies]
 clap = { version = "4.4.11", features = ["derive"] }
-color-eyre = "0.6.2"
 log = "0.4.21"
 simplelog = "0.12.2"

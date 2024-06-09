@@ -5,4 +5,5 @@
 .direnv
 .envrc
 
+# nix result
 result

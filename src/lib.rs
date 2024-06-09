@@ -61,7 +61,7 @@
 
 use std::{fs::read_to_string, io::Write};
 
-use color_eyre::Result;
+pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 /// Path for current brightness file
 static BRIGHTNESS: &str = "brightness";
@@ -80,7 +80,7 @@ pub struct Brightness {
 
 impl Brightness {
     /// Tries to create new [`Brightness`] controller
-    pub fn try_new(root: std::path::PathBuf) -> color_eyre::Result<Self> {
+    pub fn try_new(root: std::path::PathBuf) -> Result<Self> {
         let current: u32 = read_to_string(root.join(BRIGHTNESS))?.trim().parse()?;
         let max: u32 = read_to_string(root.join(MAX_BRIGHTNESS))?.trim().parse()?;
 
@@ -88,7 +88,7 @@ impl Brightness {
     }
 
     /// Sets brightness in percentage
-    pub fn set_brightness(&mut self, percent: u8) -> color_eyre::Result<()> {
+    pub fn set_brightness(&mut self, percent: u8) -> Result<()> {
         let previous = self.current;
         let new_brightness = value_from_percent(percent, self.max);
         let brightness_file = self.root.join(BRIGHTNESS);
@@ -104,7 +104,7 @@ impl Brightness {
     }
 
     /// Increase brightness by percentage
-    pub fn increase(&mut self, percent: u8) -> color_eyre::Result<()> {
+    pub fn increase(&mut self, percent: u8) -> Result<()> {
         let amount = value_from_percent(percent, self.max);
 
         let new_brightness = if self.current + amount < self.max {
@@ -119,7 +119,7 @@ impl Brightness {
     }
 
     /// Decrease brightness by percentage
-    pub fn decrease(&mut self, percent: u8) -> color_eyre::Result<()> {
+    pub fn decrease(&mut self, percent: u8) -> Result<()> {
         let amount = value_from_percent(percent, self.max);
 
         let mut new_brightness = self

@@ -1,4 +1,3 @@
-use color_eyre::eyre::OptionExt;
 use std::str::FromStr;
 
 mod cli;
@@ -6,9 +5,7 @@ mod cli;
 /// Backlight path where lives controllable backlights
 static BACKLIGHT_PATH: &str = "/sys/class/backlight";
 
-fn main() -> color_eyre::Result<()> {
-    color_eyre::install()?;
-
+fn main() -> ray::Result<()> {
     let cli = cli::Cli::get();
     let level = match cli.verbosity {
         1 => log::LevelFilter::Error,
@@ -69,7 +66,7 @@ fn main() -> color_eyre::Result<()> {
     }
 }
 
-fn get_first(path: &str) -> color_eyre::Result<std::path::PathBuf> {
+fn get_first(path: &str) -> ray::Result<std::path::PathBuf> {
     let mut folder = std::fs::read_dir(path)?;
-    Ok(folder.next().ok_or_eyre("No files in path")??.path())
+    Ok(folder.next().ok_or("No files found in path")??.path())
 }
