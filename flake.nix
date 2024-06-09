@@ -16,7 +16,6 @@
   }: let
     supportedSystems = ["x86_64-linux" "aarch64-linux"];
     forAllSystems = f: nixpkgs.lib.genAttrs supportedSystems (system: f nixpkgs.legacyPackages.${system});
-
     treefmtEval = forAllSystems (pkgs: treefmt-nix.lib.evalModule pkgs ./nix/treefmt.nix);
   in {
     packages = forAllSystems (pkgs: {

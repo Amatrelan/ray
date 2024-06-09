@@ -59,10 +59,13 @@
     clippy::verbose_file_reads
 )]
 
-use std::{fs::read_to_string, io::Write};
+use std::io::Write;
 
+/// Result what is passed around.
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
+/// Backlight path where lives controllable backlights
+static BACKLIGHT_PATH: &str = "/sys/class/backlight";
 /// Path for current brightness file
 static BRIGHTNESS: &str = "brightness";
 /// Path for max brightness file
@@ -80,9 +83,10 @@ pub struct Brightness {
 
 impl Brightness {
     /// Tries to create new [`Brightness`] controller
-    pub fn try_new(root: std::path::PathBuf) -> Result<Self> {
-        let current: u32 = read_to_string(root.join(BRIGHTNESS))?.trim().parse()?;
-        let max: u32 = read_to_string(root.join(MAX_BRIGHTNESS))?.trim().parse()?;
+    pub fn try_new(element: Option<std::path::PathBuf>) -> Result<Self> {
+        let root = element.unwrap_or(get_first(BACKLIGHT_PATH)?);
+        let current: u32 = std::fs::read_to_string(root.join(BRIGHTNESS))?.trim().parse()?;
+        let max: u32 = std::fs::read_to_string(root.join(MAX_BRIGHTNESS))?.trim().parse()?;
 
         Ok(Self { root, current, max })
     }
@@ -170,4 +174,10 @@ fn write_brightness(path: std::path::PathBuf, value: u32) -> Result<()> {
     let new_brightness = format!("{value}");
     f.write_all(new_brightness.as_bytes())?;
     Ok(())
+}
+
+
+fn get_first(path: &str) -> Result<std::path::PathBuf> {
+    let mut folder = std::fs::read_dir(path)?;
+    Ok(folder.next().ok_or("No files found in path")??.path())
 }
