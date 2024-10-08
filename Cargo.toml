@@ -12,6 +12,6 @@ license = "MIT"
 readme = "README.md"
 
 [dependencies]
-clap = { version = "4.4.11", features = ["derive"] }
-log = "0.4.21"
+clap = { version = "4.5.20", features = ["derive"] }
+log = "0.4.22"
 simplelog = "0.12.2"
